@@ -1,0 +1,39 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.card-title {
+    color: #007bff;
+    font-weight: bold;
+}
+h1 {
+    color: #343a40;
+    font-weight: bold;
+}
+table th, table td {
+    text-align: center;
+}
+iframe {
+    border-radius: 10px;
+    border: 2px solid #dee2e6;
+}
+
+#map{ 
+	width:100%; 
+	height:100%; 
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+  }
