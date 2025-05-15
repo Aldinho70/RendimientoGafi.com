@@ -56,7 +56,7 @@ class index_helper {
         const sensor_fuel = params.combustible?.[name]?.id
             ? unit_data.getSensor(params.combustible[name].id)
             : 0;
-        
+
         const sensor_fuel_usage = params.combustible_usado?.[name]?.id
             ? unit_data.getSensor(params.combustible_usado[name].id)
             : 0;
@@ -64,6 +64,8 @@ class index_helper {
         const { messages, count } = unit_messages;
 
         if (messages.length > 0) {
+            // console.log(messages);
+
             const coordinates = [];
             const speeds = [];
             const combustibles = [];
@@ -83,13 +85,23 @@ class index_helper {
                     s: speed = 0
                 } = posicion || {};
 
-                const combustible = unit_data.calculateSensorValue(sensor_fuel, element);                
+                const combustible = unit_data.calculateSensorValue(sensor_fuel, element);
 
                 if (combustible != -348201.3876) {
-                    combustibles.push(Math.round(combustible))
+                    const time = new Date(element.t * 1000).toLocaleTimeString('es-MX', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    })
+                    combustibles.push({
+                            'timestamp': element.t,
+                            'hour': time,
+                            'fuel':Math.round(combustible)
+                        }
+                    )
                 }
 
-                combustible_usage = (unit_data.calculateSensorValue(sensor_fuel_usage, element) != -348201.3876) && unit_data.calculateSensorValue(sensor_fuel_usage, element);
+                // combustible_usage = (unit_data.calculateSensorValue(sensor_fuel_usage, element) != -348201.3876) && unit_data.calculateSensorValue(sensor_fuel_usage, element);
 
                 if (latitud && longitud) {
                     coordinates.push([latitud, longitud]);
@@ -99,45 +111,65 @@ class index_helper {
 
                 const fecha = Timestamp.getTimeByTimestamp(timestamp);
             });
-            
+
             Map.dibujarRecorrido(coordinates);
 
-            const totalStop = Speed.totalStops(speeds);
-            this.generateHTMLInfo(`${totalStop} paradas`, '#paradas');
+            if (sensor_fuel === 0) {
+                Utils.showToast("Unidad sin datos de combustible", "Error", "danger");
+                this.generateHTMLInfo(`N/D`, '.kpis');
+                Highcharts.initChartLine([]);
+                Highcharts.initChart([]);
+            } else {
+                // if( !combustible_usage ){
+                    const combustiblesRegulados = Performance.suavizarCombustible( combustibles );
+                    // combustible_usage = (Performance.calcularConsumoReal(combustiblesRegulados));
+                    const promediocombustibles = Performance.agruparPromediosPorHora(combustibles);
+                    const combustible_usage = Performance.calcularConsumoYCarga(promediocombustibles);
+                // }
 
-            const promedio = Speed.calcularPromedioVelocidad(speeds);
-            // console.log(`Promedio de velocidad: ${promedio.toFixed(2)} km/h`);
-            this.generateHTMLInfo(`${promedio.toFixed(2)} Km/h`, '#velocidadPromedio');
+                const {
+                    t: start,
+                } = messages[0];
+                const {
+                    t: end,
+                } = messages[messages.length - 1];
+                const elapsedTime = Timestamp.getElapsedTime(start, end);
+                this.generateHTMLInfo(elapsedTime.formatted, '#tiempoViaje');
+                
+                if( combustibles.length ){
+                    
+                    const start_combustible = combustibles[0].fuel;
+                    this.generateHTMLInfo(`${(start_combustible)} Litros`, '#consumoInicial');
+                    
+                    const end_combustible = combustibles[combustibles.length - 1].fuel;
+                    this.generateHTMLInfo(`${(end_combustible)} Litros`, '#consumoFinal');
+    
+                    Highcharts.initChartLine(combustiblesRegulados);
+                    Highcharts.initChart(combustible_usage);
 
-            const start_combustible = combustibles[0];
-            const end_combustible = combustibles[combustibles.length - 1];
+                    this.generateHTMLInfo(`${Math.round(combustible_usage.consumo)} Litros`, '#combustible_consumido');
+    
+                    const totalKm = Haversine.calculateDistanceByLatLong(coordinates);                
+                    this.generateHTMLInfo(`${Math.round(totalKm)}KM`, '#kmRecorridos');
 
-            const {
-                t: start,
-            } = messages[0];
-            const {
-                t: end,
-            } = messages[messages.length - 1];
+                    const rendimiento = Performance.calcularRendimiento(Math.round(totalKm), Math.round(combustible_usage.consumo));
+                    this.generateHTMLInfo(`${rendimiento.toFixed(2)} km/l`, '#rendimiento');
+                }else{
+                    Utils.showToast(`Error de lectura de sensor ${sensor_fuel.n}`, "Error", "danger");
+                    this.generateHTMLInfo(`N/D`, '.kpis');
+                    Highcharts.initChartLine([]);
+                    Highcharts.initChart([]);
+                    Highcharts.initChart([]);
+                }
 
-            Highcharts.initChart({ start_combustible, end_combustible });
+                const totalStop = Speed.totalStops(speeds);
+                this.generateHTMLInfo(`${totalStop} paradas`, '#paradas');
 
-            this.generateHTMLInfo(`${(start_combustible)} Litros`, '#consumoInicial');
-            this.generateHTMLInfo(`${(end_combustible)} Litros`, '#consumoFinal');
-
-            const elapsedTime = Timestamp.getElapsedTime(start, end);
-            this.generateHTMLInfo(elapsedTime.formatted, '#tiempoViaje');
-
-            const totalKm = Haversine.calculateDistanceByLatLong(coordinates);
-            this.generateHTMLInfo(`${totalKm}KM`, '#kmRecorridos');
-
-            this.generateHTMLInfo(`${combustible_usage} Litros`, '#combustible_consumido');
-
-            const rendimiento = Performance.calcularRendimiento(totalKm, combustible_usage);
-
-            this.generateHTMLInfo(`${rendimiento} km/l`, '#rendimiento');
-
+                const promedio = Speed.calcularPromedioVelocidad(speeds);
+                this.generateHTMLInfo(`${promedio.toFixed(2)} Km/h`, '#velocidadPromedio');
+            }
         } else {
-            console.log('No hay mensajes');
+            Utils.showToast("No hay mensajes", "Error", "info");
         }
     }
     /* --------------------------------------------------- */

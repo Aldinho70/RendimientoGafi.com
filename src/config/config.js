@@ -33,7 +33,7 @@ export const params = {
 
 /* Configuraciones del componente Navbar */
 export const Navbar = {
-    brand: 'Rendimiento de combustible',
+    brand: 'Rendimiento de combustible Gafi',
     img_brand: './src/img/' + 'logogafi.jpeg', /* brand principal */
     img_brand_2: './src/img/' + 'logojd.png',/* brand secundario */
     items: [

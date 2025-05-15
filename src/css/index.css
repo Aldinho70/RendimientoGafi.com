@@ -37,3 +37,7 @@ iframe {
     background: rgba(255, 255, 255, 0.8);
     z-index: 9999;
   }
+
+  #Main_root{
+    border-radius: 150px;
+  }
