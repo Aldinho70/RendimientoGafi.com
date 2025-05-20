@@ -16,7 +16,7 @@ $(document).ready(() => {
   index_helper.getUnits(sdk);
 
   Map.initMap();
-  Highchart.initChart({ start_combustible: 1, end_combustible: 1 });
+  // Highchart.initChart({ start_combustible: 1, end_combustible: 1 });
 
   $(`#searchButton`).button().click( () => {
     const startDate = $(`#startDate`).val();    

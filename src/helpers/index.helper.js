@@ -125,6 +125,7 @@ class index_helper {
                     // combustible_usage = (Performance.calcularConsumoReal(combustiblesRegulados));
                     const promediocombustibles = Performance.agruparPromediosPorHora(combustibles);
                     const combustible_usage = Performance.calcularConsumoYCarga(promediocombustibles);
+                    const combustible_usage_dias =  Performance.calcularConsumoYCargaPorDia(promediocombustibles);
                 // }
 
                 const {
@@ -145,7 +146,10 @@ class index_helper {
                     this.generateHTMLInfo(`${(end_combustible)} Litros`, '#consumoFinal');
     
                     Highcharts.initChartLine(combustiblesRegulados);
-                    Highcharts.initChart(combustible_usage);
+                    Highcharts.initChart(combustible_usage_dias);
+
+                    this.generateHTMLInfo(`${Math.round(combustible_usage.consumo)} Litros`, '#descargaTotal');
+                    this.generateHTMLInfo(`${Math.round(combustible_usage.carga)} Litros`, '#cargaTotal');
 
                     this.generateHTMLInfo(`${Math.round(combustible_usage.consumo)} Litros`, '#combustible_consumido');
     
@@ -158,7 +162,6 @@ class index_helper {
                     Utils.showToast(`Error de lectura de sensor ${sensor_fuel.n}`, "Error", "danger");
                     this.generateHTMLInfo(`N/D`, '.kpis');
                     Highcharts.initChartLine([]);
-                    Highcharts.initChart([]);
                     Highcharts.initChart([]);
                 }
 
