@@ -5,6 +5,7 @@ import { params } from '../config/config.js';
 import Haversine from '../utils/Haversine.js';
 import Timestamp from '../utils/timestamp.js';
 import Performance from '../utils/performance.js';
+import { agruparPorDia, agruparPorHora, eliminarRepetidosConsecutivos, filtrarCargasValidas } from '../utils/performanceFuel.js';
 import Highcharts from '../api/highchart/index.highchart.js';
 import MessagesService from '../api/wialon/messages.wialon.js';
 class index_helper {
@@ -64,15 +65,16 @@ class index_helper {
         const { messages, count } = unit_messages;
 
         if (messages.length > 0) {
-            // console.log(messages);
+            // console.log('mensaje: ',messages);
 
             const coordinates = [];
             const speeds = [];
             let combustibles = [];
-            let combustible_usage;
+            /* new fuel*/
+                let combustiblesPruebas = [];
+            /* new fuel*/
 
             messages.map(element => {
-
                 const {
                     t: timestamp = 0,
                     pos: posicion = {},
@@ -93,15 +95,25 @@ class index_helper {
                         minute: '2-digit',
                         hour12: false
                     })
-                    if (element.pos.s == 0) {
-                        combustibles.push({
-                            'timestamp': element.t,
-                            'hour': time,
-                            'fuel': Math.round(combustible),
-                            'speed': element.pos.s
-                        }
-                        )
+                    combustibles.push({
+                        'timestamp': element.t,
+                        'hour': time,
+                        'fuel': Math.round(combustible),
+                        'speed': element.pos.s,
+                        'mov': element.p.movement_sens
+                    })
+
+                    /* ----- */
+                        if (element.pos.s == 0 ) {
+                            combustiblesPruebas.push({
+                                'timestamp': element.t,
+                                'hour': time,
+                                'fuel': Math.round(combustible),
+                                'speed': element.pos.s,
+                                'mov': element.p.movement_sens
+                        })
                     }
+                    /* ----- */
                 }
 
                 // combustible_usage = (unit_data.calculateSensorValue(sensor_fuel_usage, element) != -348201.3876) && unit_data.calculateSensorValue(sensor_fuel_usage, element);
@@ -123,52 +135,61 @@ class index_helper {
                 Highcharts.initChartLine([]);
                 Highcharts.initChart([]);
             } else {
-                console.log('Grafica total de combustible: ', combustibles);
-                console.log('Grafica total de combustible2: ', this.filtrarCargasValidas(combustibles));
 
-                combustibles = this.filtrarCargasValidas(combustibles)
+                /* new fuel */
+                    const combustibleLimpio = eliminarRepetidosConsecutivos(combustiblesPruebas)
+                    const combustiblePorHora = agruparPorHora(combustibleLimpio);
+                    const combustiblePorDia = agruparPorDia(combustiblePorHora);
+                    // console.log('Grafica total de combustible: ', combustiblesPruebas);
+                    console.log('Grafica total de combustible limpia: ', combustibleLimpio);
+                    console.log('Grafica total de combustible por hora: ', combustiblePorHora);
+                    console.log('Grafica total de combustible por dias: ', combustiblePorDia);
+                /* new fuel */
+
+                // combustibles = this.filtrarCargasValidas(combustibles)
                 // if( !combustible_usage ){
-                const combustiblesRegulados = Performance.suavizarCombustible(combustibles);
-                console.log('Combustibles seavisados: ', combustiblesRegulados);
+                // const combustiblesRegulados = Performance.suavizarCombustible(combustibles);
+                // console.log( 'Combustibles regulados: ', combustiblesRegulados );
+                
 
                 // combustible_usage = (Performance.calcularConsumoReal(combustiblesRegulados));
-                const promediocombustibles = Performance.agruparPromediosPorHora(combustibles);
-                console.log('Promedio de combustible: ', promediocombustibles);
+                // const promediocombustibles = Performance.agruparPromediosPorHora(combustibles);
 
-                const combustible_usage = Performance.calcularConsumoYCarga(promediocombustibles);
-                const combustible_usage_dias = Performance.calcularConsumoYCargaPorDia(promediocombustibles);
+                // const combustible_usage = Performance.calcularConsumoYCarga(promediocombustibles);
+                // console.log( `COmbustible usage:`, combustible_usage );
+                
+                // const combustible_usage_dias = Performance.calcularConsumoYCargaPorDia(promediocombustibles);
+                // console.log( `COmbustible usage dias:`, combustible_usage_dias );
+                
                 // }
 
-                const {
-                    t: start,
-                } = messages[0];
-                const {
-                    t: end,
-                } = messages[messages.length - 1];
+                const {t: start } = messages[0];
+                const {t: end } = messages[messages.length - 1];
                 const elapsedTime = Timestamp.getElapsedTime(start, end);
                 this.generateHTMLInfo(elapsedTime.formatted, '#tiempoViaje');
 
                 if (combustibles.length) {
 
+                    Highcharts.initChartLine(combustibleLimpio);
+                    Highcharts.initChart(combustiblePorDia);
+
                     const start_combustible = combustibles[0].fuel;
-                    this.generateHTMLInfo(`${(start_combustible)} Litros`, '#consumoInicial');
+                    this.generateHTMLInfo(`${(start_combustible)}`, '#consumoInicial');
 
                     const end_combustible = combustibles[combustibles.length - 1].fuel;
-                    this.generateHTMLInfo(`${(end_combustible)} Litros`, '#consumoFinal');
+                    this.generateHTMLInfo(`${(end_combustible)}`, '#consumoFinal');
 
-                    Highcharts.initChartLine(combustiblesRegulados);
-                    Highcharts.initChart(combustible_usage_dias);
 
-                    this.generateHTMLInfo(`${Math.round(combustible_usage.consumo)} Litros`, '#descargaTotal');
-                    this.generateHTMLInfo(`${Math.round(combustible_usage.carga)} Litros`, '#cargaTotal');
+                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.totalDescarga)}`, '#descargaTotal');
+                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.totalCarga)}`, '#cargaTotal');
 
-                    this.generateHTMLInfo(`${Math.round(combustible_usage.consumo)} Litros`, '#combustible_consumido');
+                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.conteoCargas)}`, '#cargas_totales');
 
                     const totalKm = Haversine.calculateDistanceByLatLong(coordinates);
-                    this.generateHTMLInfo(`${Math.round(totalKm)}KM`, '#kmRecorridos');
+                    this.generateHTMLInfo(`${Math.round(totalKm)}`, '#kmRecorridos');
 
-                    const rendimiento = Performance.calcularRendimiento(Math.round(totalKm), Math.round(combustible_usage.consumo));
-                    this.generateHTMLInfo(`${rendimiento.toFixed(2)} km/l`, '#rendimiento');
+                    const rendimiento = Performance.calcularRendimiento(Math.round(totalKm), Math.round(combustiblePorDia.totalDescarga));
+                    this.generateHTMLInfo(`${rendimiento.toFixed(2)}`, '#rendimiento');
                 } else {
                     Utils.showToast(`Error de lectura de sensor ${sensor_fuel.n}`, "Error", "danger");
                     this.generateHTMLInfo(`N/D`, '.kpis');
@@ -187,28 +208,5 @@ class index_helper {
         }
     }
     /* --------------------------------------------------- */
-
-    filtrarCargasValidas(registros, umbralMinLitros = 15) {
-        if (!Array.isArray(registros) || registros.length === 0) return [];
-
-        const resultado = [];
-        let anterior = registros[0];
-
-        for (let i = 1; i < registros.length; i++) {
-            const actual = registros[i];
-            const diferencia = actual.fuel - anterior.fuel;
-
-            // Solo considerar como carga válida si el aumento es significativo
-            if (diferencia >= umbralMinLitros) {
-                resultado.push(actual);
-            }
-
-            // Siempre actualizar el anterior
-            anterior = actual;
-        }
-
-        return resultado;
-    }
-
 }
 export default new index_helper();

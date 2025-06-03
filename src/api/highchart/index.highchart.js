@@ -29,7 +29,7 @@ class Highchart {
     initChartLine(data) {
         const transformedData = data.map(item => [
             item.timestamp * 1000,  // Convertir timestamp a milisegundos
-            item.fuel_suavizado
+            item.fuel
         ]);
 
         Highcharts.chart('graficaComportamiento', {
@@ -98,9 +98,24 @@ class Highchart {
     }
 
     initChart(dataPorDia) {
-        const dias = dataPorDia.map(e => e.dia);
-        const cargas = dataPorDia.map(e => e.carga);
-        const consumos = dataPorDia.map(e => e.consumo);
+            let dias = [];
+            let cargas = [];
+            let descargas = [];
+
+        for (const key in dataPorDia) {
+            if (Object.prototype.hasOwnProperty.call(dataPorDia, key)) {
+                const element = dataPorDia[key];
+                
+                if(element.horas){
+                    dias.push(key)
+                    cargas.push(element.carga)
+                    descargas.push(element.descarga)
+                }
+
+            }
+        }
+
+        console.log( cargas, descargas, dias );
 
         Highcharts.chart('graficaConsumo', {
             chart: {
@@ -137,7 +152,7 @@ class Highchart {
                 },
                 {
                     name: 'Descarga',
-                    data: consumos,
+                    data: descargas,
                     color: '#dc3545'
                 }
             ]

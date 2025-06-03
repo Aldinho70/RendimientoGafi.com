@@ -36,12 +36,12 @@ $(document).ready(() => {
                     <div class="card shadow border-0 text-bg-light">
                         <h6 class="card-header">Tanque al inicio</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold" ><span class="kpis" id="consumoInicial" >0<span/> Litros</h4>
+                            <h4 class="fw-bold" ><span class="kpis" id="consumoInicial" >0</span> Litros</h4>
                         </div>
                         <div class="card shadow border-0 text-bg-light">
                             <h6 class="card-header">Tanque al final</h6>
                             <div class="card-body">
-                                <h4 class="fw-bold" ><span class="kpis" id="consumoFinal" >0<span/> Litros</h4>
+                                <h4 class="fw-bold" ><span class="kpis" id="consumoFinal" >0</span> Litros</h4>
                             </div>
                         </div>
                     </div>
@@ -50,13 +50,13 @@ $(document).ready(() => {
                     <div class="card shadow border-0 text-bg-light">
                         <h6 class="card-header">Rendimiento</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold text-success" ><span class="kpis" id="rendimiento" >0<span/> KM/Litros</h4>
+                            <h4 class="fw-bold text-success" ><span class="kpis" id="rendimiento" >0</span> KM/Litros</h4>
                         </div>
                     </div>
                     <div class="card shadow border-0 text-bg-light">
                     <h6 class="card-header" >Kilómetros Recorridos</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold text-info"><span class="kpis" id="kmRecorridos">0<span/> KM</h4>
+                            <h4 class="fw-bold text-info"><span class="kpis" id="kmRecorridos">0</span> KM</h4>
                         </div>
                     </div>
                 </div>
@@ -64,12 +64,12 @@ $(document).ready(() => {
                     <div class="card shadow border-0 text-bg-light">
                         <h6 class="card-header">Cargado total</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold" ><span class="kpis" id="cargaTotal" >0<span/> Litros</h4>
+                            <h4 class="fw-bold" ><span class="kpis" id="cargaTotal" >0</span> Litros</h4>
                         </div>
                         <div class="card shadow border-0 text-bg-light">
                             <h6 class="card-header">Descarga total</h6>
                             <div class="card-body">
-                                <h4 class="fw-bold" ><span class="kpis" id="descargaTotal" >0<span/> Litros</h4>
+                                <h4 class="fw-bold" ><span class="kpis" id="descargaTotal" >0</span> Litros</h4>
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,7 @@ $(document).ready(() => {
                     <div class="card shadow border-0 ">
                         <h6 class="card-header">Tiempo de Viaje</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold" ><span class="kpis" id="tiempoViaje">0<span/> Horas</h4>
+                            <h4 class="fw-bold" ><span class="kpis" id="tiempoViaje">0</span> Horas</h4>
                         </div>
                     </div>
                 </div>
@@ -127,15 +127,15 @@ $(document).ready(() => {
                     <div class="card shadow border-0">
                         <h6 class="card-header">Velocidad Promedio</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold text-warning" ><span class="kpis" id="velocidadPromedio">0<span/> KM/H</h4>
+                            <h4 class="fw-bold text-warning" ><span class="kpis" id="velocidadPromedio">0</span> KM/H</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="card shadow border-0">
-                        <h6 class="card-header">Combustible consumido</h6>
+                        <h6 class="card-header">Cargas totales</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold text-danger" ><span class="kpis" id="combustible_consumido">0<span/> Litros</h4>
+                            <h4 class="fw-bold text-danger" ><span class="kpis" id="cargas_totales">0</span> Cargas</h4>
                         </div>
                     </div>
                 </div>
