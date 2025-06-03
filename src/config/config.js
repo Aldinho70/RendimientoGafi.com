@@ -1,40 +1,94 @@
-export const TOKEN = "733a7307cd0dd55c139f57fcaa9269d3686C2000651F8B1F06E56BFFCFC37C2656113BC6";
+export const TOKEN = "fa54a97c1348167613707146e3ce1c2163C874116C8222C592D6EF7CB721C8F09EB9A4C9";
 export const CDN = "https://hst-api.wialon.com";
 
 /* configuracion de sensores y parametros necesarios para  */
 export const params = {
-        combustible: {
-            "GAFI 679 GAS":{
-                name: 'Combustible Total',
-                type: 'fuel level',
-                id: 9,
-            },            
-            "GAFI 679 OBD":{
-                name: 'Combustible Total',
-                type: 'fuel level',
-                id: 2,
-            },            
-            "GAFI - 516":{
-                name: 'Combustible Total',
-                type: 'fuel level',
-                id: 9,
-            },            
+    combustible: {
+        "TFS - 109": {
+            name: 'Combustible Total',
+            type: 'fuel level',
+            id: 34,
         },
-        combustible_usado: {
-            "GAFI - 516":{
-                name: 'Combustible Total',
-                type: 'fuel level',
-                id: 9,
-            }, 
+        "TFS - 26": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 34,
         },
+        "TFS - 31": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 28,
+        },
+        "TFS - 47": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 28,
+        },
+        "TFS - 49": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 28,
+        },
+        "TFS - 108": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 28,
+        },
+        "TFS - 109": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 34,
+        },
+        "TFS - 24": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 9,
+        },
+        "TFS - 25": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 8,
+        },
+        "TFS - 104": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 10,
+        },
+        "TFS - 105": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 10,
+        },
+        "TFS - 106": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 10,
+        },
+        "TFS - 107": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 10,
+        },
+        "TFS - 110": {
+            name: 'COMBUSTIBLE TOTAL',
+            type: 'fuel level',
+            id: 2,
+        }
+    },
+    combustible_usado: {
+        "TFS - 109": {
+            name: 'Combustible utilizado',
+            id: 27,
+        },
+    },
 
     odometer: ['odometer']
 }
 
 /* Configuraciones del componente Navbar */
 export const Navbar = {
-    brand: 'Rendimiento de combustible Gafi',
-    img_brand: './src/img/' + 'logogafi.jpeg', /* brand principal */
+    brand: 'Rendimiento de combustible Ticsa-Trafusa',
+    img_brand: './src/img/' + 'TicsaTrafusa_logo.png', /* brand principal */
     img_brand_2: './src/img/' + 'logojd.png',/* brand secundario */
     items: [
         { label: 'Dashboard', icon: 'fas fa-tachometer-alt', to: '/dashboard' },
@@ -60,13 +114,6 @@ export const Footer = {
 }
 
 /**
- * KM RECORRIDOS  - ODOMETRO
- * LITROS CONSUMIDOS - TANQUES
- * Tiempos
- * velocidad
- */
-
-/**
- * USUARIO: DEVCUENTADEMO
- * CONTRASEÑA: Devcdemo-2024
+ * USUARIO: DASHCOMB TRAFUSA
+ * CONTRASEÑA: Dash-2025
  */

@@ -141,9 +141,9 @@ class index_helper {
                     const combustiblePorHora = agruparPorHora(combustibleLimpio);
                     const combustiblePorDia = agruparPorDia(combustiblePorHora);
                     // console.log('Grafica total de combustible: ', combustiblesPruebas);
-                    console.log('Grafica total de combustible limpia: ', combustibleLimpio);
-                    console.log('Grafica total de combustible por hora: ', combustiblePorHora);
-                    console.log('Grafica total de combustible por dias: ', combustiblePorDia);
+                    // console.log('Grafica total de combustible limpia: ', combustibleLimpio);
+                    // console.log('Grafica total de combustible por hora: ', combustiblePorHora);
+                    // console.log('Grafica total de combustible por dias: ', combustiblePorDia);
                 /* new fuel */
 
                 // combustibles = this.filtrarCargasValidas(combustibles)
