@@ -119,7 +119,7 @@ export function agruparPorDia(objetoPorHora) {
             if (diferencia > 35) {
                 carga += diferencia + 10;
             } else if (diferencia < -5) {
-                descarga += Math.abs(diferencia);
+                descarga += Math.abs(diferencia) + 10;
             }
         }
 
