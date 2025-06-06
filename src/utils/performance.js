@@ -2,7 +2,7 @@ class Perfomance {
 
     calcularRendimiento(distanciaKm, combustibleLitros) {
         if (combustibleLitros <= 0) {
-            return null;
+            return 0;
         }
         return distanciaKm / combustibleLitros;
     }

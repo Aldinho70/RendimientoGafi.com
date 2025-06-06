@@ -85,7 +85,11 @@ class index_helper {
                     s: speed = 0
                 } = posicion || {};
                 
-                
+                if( element.pos ){
+                    /* array de velocidades registradas */
+                    speeds.push(element.pos.s);
+                }
+
                 /* array de posiciones registradas */
                 if (latitud && longitud) {
                     coordinates.push([latitud, longitud]);
@@ -117,10 +121,6 @@ class index_helper {
                                 'mov': element.p.movement_sens
                             })
                         }
-
-                        /* array de velocidades registradas */
-                        speeds.push(element.pos.s);
-                        
                     }
                 }
             });
@@ -169,7 +169,7 @@ class index_helper {
                     
                     /* Rendimiento de combustible y kilometros*/
                     const rendimiento = Performance.calcularRendimiento(Math.round(totalKm), Math.round(combustiblePorDia.totalDescarga));
-                    this.generateHTMLInfo(`${rendimiento.toFixed(2)}`, '#rendimiento');
+                    this.generateHTMLInfo(`${rendimiento}`, '#rendimiento');
                 } else {
                     Utils.showToast(`Error de lectura de sensor ${sensor_fuel.n}`, "Error", "danger");
                     this.generateHTMLInfo(`N/D`, '.kpis');
@@ -181,7 +181,7 @@ class index_helper {
                 this.generateHTMLInfo(`${totalStop} paradas`, '#paradas');
 
                 const promedio = Speed.calcularPromedioVelocidad(speeds);
-                this.generateHTMLInfo(`${promedio.toFixed(2)} Km/h`, '#velocidadPromedio');
+                this.generateHTMLInfo(`${promedio.toFixed(2)}`, '#velocidadPromedio');
             }
         } else {
             Utils.showToast("No hay mensajes", "Error", "info");
