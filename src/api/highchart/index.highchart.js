@@ -114,9 +114,7 @@ class Highchart {
 
             }
         }
-
-        console.log( cargas, descargas, dias );
-
+        
         Highcharts.chart('graficaConsumo', {
             chart: {
                 type: 'column'
