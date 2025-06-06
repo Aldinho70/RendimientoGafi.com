@@ -148,5 +148,5 @@ function getLoading(tag) {
     $(tag).fadeIn();
     setTimeout(() => {
         $(tag).fadeOut();
-    }, 3000);
+    }, 1000);
 }
