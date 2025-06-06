@@ -85,14 +85,12 @@ class index_helper {
                     s: speed = 0
                 } = posicion || {};
                 
-                /* array de velocidades registradas */
-                speeds.push(speed);
-
+                
                 /* array de posiciones registradas */
                 if (latitud && longitud) {
                     coordinates.push([latitud, longitud]);
                 }
-
+                
                 /* array de combutible */
                 const combustible = unit_data.calculateSensorValue(sensor_fuel, element);
                 if (combustible != -348201.3876) {
@@ -108,24 +106,28 @@ class index_helper {
                         'speed': (element.pos) ? element.pos.s : 0,
                         'mov': element.p.movement_sens
                     })
-
+                    
                     if( element.pos ){
                         if (element.pos.s == 0 ) {
                             combustiblesPruebas.push({
-                            'timestamp': element.t,
-                            'hour': time,
-                            'fuel': Math.round(combustible),
-                            'speed': element.pos.s,
-                            'mov': element.p.movement_sens
+                                'timestamp': element.t,
+                                'hour': time,
+                                'fuel': Math.round(combustible),
+                                'speed': element.pos.s,
+                                'mov': element.p.movement_sens
                             })
                         }
+
+                        /* array de velocidades registradas */
+                        speeds.push(element.pos.s);
+                        
                     }
                 }
             });
-
+            
             /* Dibujar recorrido de la unidad */
             Map.dibujarRecorrido(coordinates);
-
+            
             if (sensor_fuel === 0) {
                 Utils.showToast("Unidad sin datos de combustible", "Error", "danger");
                 this.generateHTMLInfo(`N/D`, '.kpis');
