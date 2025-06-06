@@ -19,10 +19,10 @@ $(document).ready(() => {
   // Highchart.initChart({ start_combustible: 1, end_combustible: 1 });
 
   $(`#searchButton`).button().click( () => {
-    // const startDate = $(`#startDate`).val();    
-    // const endDate = $(`#endDate`).val();      
-    const startDate = '2025-06-01T23:59'
-    const endDate = '2025-06-06T23:59';      
+    const startDate = $(`#startDate`).val();    
+    const endDate = $(`#endDate`).val();      
+    // const startDate = '2025-06-01T23:59'
+    // const endDate = '2025-06-06T23:59';      
 
     if( startDate && endDate ){
       if( startDate == endDate ){
