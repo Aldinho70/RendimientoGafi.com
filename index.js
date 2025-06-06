@@ -21,8 +21,8 @@ $(document).ready(() => {
   $(`#searchButton`).button().click( () => {
     const startDate = $(`#startDate`).val();    
     const endDate = $(`#endDate`).val();      
-    // const startDate = '2025-05-13T23:59'
-    // const endDate = '2025-05-14T23:59';      
+    // const startDate = '2025-06-01T23:59'
+    // const endDate = '2025-06-05T23:59';      
 
     if( startDate && endDate ){
       if( startDate == endDate ){

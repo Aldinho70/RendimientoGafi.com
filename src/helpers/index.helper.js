@@ -70,10 +70,8 @@ class index_helper {
             const coordinates = [];
             const speeds = [];
             let combustibles = [];
-            /* new fuel*/
-                let combustiblesPruebas = [];
-            /* new fuel*/
-
+            let combustiblesPruebas = [];
+            
             messages.map(element => {
                 const {
                     t: timestamp = 0,
@@ -86,9 +84,17 @@ class index_helper {
                     y: latitud = 0,
                     s: speed = 0
                 } = posicion || {};
+                
+                /* array de velocidades registradas */
+                speeds.push(speed);
 
+                /* array de posiciones registradas */
+                if (latitud && longitud) {
+                    coordinates.push([latitud, longitud]);
+                }
+
+                /* array de combutible */
                 const combustible = unit_data.calculateSensorValue(sensor_fuel, element);
-
                 if (combustible != -348201.3876) {
                     const time = new Date(element.t * 1000).toLocaleTimeString('es-MX', {
                         hour: '2-digit',
@@ -99,34 +105,25 @@ class index_helper {
                         'timestamp': element.t,
                         'hour': time,
                         'fuel': Math.round(combustible),
-                        'speed': element.pos.s,
+                        'speed': (element.pos) ? element.pos.s : 0,
                         'mov': element.p.movement_sens
                     })
 
-                    /* ----- */
+                    if( element.pos ){
                         if (element.pos.s == 0 ) {
                             combustiblesPruebas.push({
-                                'timestamp': element.t,
-                                'hour': time,
-                                'fuel': Math.round(combustible),
-                                'speed': element.pos.s,
-                                'mov': element.p.movement_sens
-                        })
+                            'timestamp': element.t,
+                            'hour': time,
+                            'fuel': Math.round(combustible),
+                            'speed': element.pos.s,
+                            'mov': element.p.movement_sens
+                            })
+                        }
                     }
-                    /* ----- */
                 }
-
-                // combustible_usage = (unit_data.calculateSensorValue(sensor_fuel_usage, element) != -348201.3876) && unit_data.calculateSensorValue(sensor_fuel_usage, element);
-
-                if (latitud && longitud) {
-                    coordinates.push([latitud, longitud]);
-                }
-
-                speeds.push(speed);
-
-                const fecha = Timestamp.getTimeByTimestamp(timestamp);
             });
 
+            /* Dibujar recorrido de la unidad */
             Map.dibujarRecorrido(coordinates);
 
             if (sensor_fuel === 0) {
@@ -135,59 +132,40 @@ class index_helper {
                 Highcharts.initChartLine([]);
                 Highcharts.initChart([]);
             } else {
+                /* Filtrado y limpeza del array de combustible*/
+                const combustibleLimpio = eliminarRepetidosConsecutivos(combustiblesPruebas)
+                const combustiblePorHora = agruparPorHora(combustibleLimpio);
+                const combustiblePorDia = agruparPorDia(combustiblePorHora);
 
-                /* new fuel */
-                    const combustibleLimpio = eliminarRepetidosConsecutivos(combustiblesPruebas)
-                    const combustiblePorHora = agruparPorHora(combustibleLimpio);
-                    const combustiblePorDia = agruparPorDia(combustiblePorHora);
-                    // console.log('Grafica total de combustible: ', combustiblesPruebas);
-                    console.log('Grafica total de combustible limpia: ', combustibleLimpio);
-                    console.log('Grafica total de combustible por hora: ', combustiblePorHora);
-                    console.log('Grafica total de combustible por dias: ', combustiblePorDia);
-                /* new fuel */
-
-                // combustibles = this.filtrarCargasValidas(combustibles)
-                // if( !combustible_usage ){
-                // const combustiblesRegulados = Performance.suavizarCombustible(combustibles);
-                // console.log( 'Combustibles regulados: ', combustiblesRegulados );
-                
-
-                // combustible_usage = (Performance.calcularConsumoReal(combustiblesRegulados));
-                // const promediocombustibles = Performance.agruparPromediosPorHora(combustibles);
-
-                // const combustible_usage = Performance.calcularConsumoYCarga(promediocombustibles);
-                // console.log( `COmbustible usage:`, combustible_usage );
-                
-                // const combustible_usage_dias = Performance.calcularConsumoYCargaPorDia(promediocombustibles);
-                // console.log( `COmbustible usage dias:`, combustible_usage_dias );
-                
-                // }
-
+                /* Calcular tiempo de Fecha A - Fecha B */
                 const {t: start } = messages[0];
                 const {t: end } = messages[messages.length - 1];
                 const elapsedTime = Timestamp.getElapsedTime(start, end);
                 this.generateHTMLInfo(elapsedTime.formatted, '#tiempoViaje');
 
                 if (combustibles.length) {
-
-                    Highcharts.initChartLine(combustibleLimpio);
+                    /* Graficas de combustible */
                     Highcharts.initChart(combustiblePorDia);
+                    Highcharts.initChartLine(combustibleLimpio);
+                    
+                    /* Datos de carga y descarga de combustible */
+                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.totalCarga)}`, '#cargaTotal');
+                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.conteoCargas)}`, '#cargas_totales');
+                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.totalDescarga)}`, '#descargaTotal');
 
+                    /* combustible inicial */
                     const start_combustible = combustibles[0].fuel;
                     this.generateHTMLInfo(`${(start_combustible)}`, '#consumoInicial');
-
+                    
+                    /* combustible final */
                     const end_combustible = combustibles[combustibles.length - 1].fuel;
                     this.generateHTMLInfo(`${(end_combustible)}`, '#consumoFinal');
-
-
-                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.totalDescarga)}`, '#descargaTotal');
-                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.totalCarga)}`, '#cargaTotal');
-
-                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.conteoCargas)}`, '#cargas_totales');
-
+                    
+                    /* Kilometros totales */
                     const totalKm = Haversine.calculateDistanceByLatLong(coordinates);
                     this.generateHTMLInfo(`${Math.round(totalKm)}`, '#kmRecorridos');
-
+                    
+                    /* Rendimiento de combustible y kilometros*/
                     const rendimiento = Performance.calcularRendimiento(Math.round(totalKm), Math.round(combustiblePorDia.totalDescarga));
                     this.generateHTMLInfo(`${rendimiento.toFixed(2)}`, '#rendimiento');
                 } else {
