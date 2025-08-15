@@ -169,7 +169,7 @@ class index_helper {
                     
                     /* Rendimiento de combustible y kilometros*/
                     const rendimiento = Performance.calcularRendimiento(Math.round(totalKm), Math.round(combustiblePorDia.totalDescarga));
-                    this.generateHTMLInfo(`${rendimiento}`, '#rendimiento');
+                    this.generateHTMLInfo(`${rendimiento.toFixed(2)}`, '#rendimiento');
                 } else {
                     Utils.showToast(`Error de lectura de sensor ${sensor_fuel.n}`, "Error", "danger");
                     this.generateHTMLInfo(`N/D`, '.kpis');
