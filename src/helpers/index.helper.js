@@ -5,9 +5,12 @@ import { params } from '../config/config.js';
 import Haversine from '../utils/Haversine.js';
 import Timestamp from '../utils/timestamp.js';
 import Performance from '../utils/performance.js';
-import { agruparPorDia, agruparPorHora, eliminarRepetidosConsecutivos, filtrarCargasValidas } from '../utils/performanceFuel.js';
 import Highcharts from '../api/highchart/index.highchart.js';
 import MessagesService from '../api/wialon/messages.wialon.js';
+import { getSensorByName } from '../api/wialon/utils/sensors/utils.js';
+import { agruparPorDia, agruparPorHora, eliminarRepetidosConsecutivos, filtrarCargasValidas } from '../utils/performanceFuel.js';
+import timestamp from '../utils/timestamp.js';
+
 class index_helper {
 
     /**
@@ -54,12 +57,8 @@ class index_helper {
         const name = unit_data.getName();
         const sensors = unit_data.getSensors();
 
-        const sensor_fuel = params.combustible?.[name]?.id
-            ? unit_data.getSensor(params.combustible[name].id)
-            : 0;
-
-        const sensor_fuel_usage = params.combustible_usado?.[name]?.id
-            ? unit_data.getSensor(params.combustible_usado[name].id)
+        const sensor_fuel = getSensorByName('COMBUSTIBLE DASHBOARD', sensors)?.id
+            ? unit_data.getSensor(getSensorByName('COMBUSTIBLE DASHBOARD', sensors).id)
             : 0;
 
         const { messages, count } = unit_messages;
@@ -73,36 +72,34 @@ class index_helper {
             let combustiblesPruebas = [];
             
             messages.map(element => {
-                const {
-                    t: timestamp = 0,
-                    pos: posicion = {},
-                    p: parametros = {}
-                } = element;
+                const { pos: posicion = {}, } = element;
 
                 const {
                     x: longitud = 0,
                     y: latitud = 0,
                     s: speed = 0
                 } = posicion || {};
-                
-                if( element.pos ){
-                    /* array de velocidades registradas */
-                    speeds.push(element.pos.s);
-                }
+
+                /* array de velocidades registradas */
+                    if( element.pos ){
+                        speeds.push(element.pos.s);
+                    }
 
                 /* array de posiciones registradas */
-                if (latitud && longitud) {
-                    coordinates.push([latitud, longitud]);
-                }
+                    if (latitud && longitud) {
+                        coordinates.push([latitud, longitud]);
+                    }
                 
                 /* array de combutible */
                 const combustible = unit_data.calculateSensorValue(sensor_fuel, element);
+                
                 if (combustible != -348201.3876) {
                     const time = new Date(element.t * 1000).toLocaleTimeString('es-MX', {
                         hour: '2-digit',
                         minute: '2-digit',
                         hour12: false
                     })
+                    
                     combustibles.push({
                         'timestamp': element.t,
                         'hour': time,
@@ -113,13 +110,15 @@ class index_helper {
                     
                     if( element.pos ){
                         if (element.pos.s == 0 ) {
-                            combustiblesPruebas.push({
-                                'timestamp': element.t,
-                                'hour': time,
-                                'fuel': Math.round(combustible),
-                                'speed': element.pos.s,
-                                'mov': element.p.movement_sens
-                            })
+                            if( timestamp.isQuarterHour(time, 0) ){
+                                combustiblesPruebas.push({
+                                    'timestamp': element.t,
+                                    'hour': time,
+                                    'fuel': Math.round(combustible),
+                                    'speed': element.pos.s,
+                                    'mov': element.p.movement_sens
+                                })
+                            }
                         }
                     }
                 }
@@ -130,20 +129,23 @@ class index_helper {
             
             if (sensor_fuel === 0) {
                 Utils.showToast("Unidad sin datos de combustible", "Error", "danger");
-                this.generateHTMLInfo(`N/D`, '.kpis');
+                this.generateHTMLInfo(`Sin datos`, '.kpis');
                 Highcharts.initChartLine([]);
                 Highcharts.initChart([]);
             } else {
                 /* Filtrado y limpeza del array de combustible*/
+                console.log(combustiblesPruebas);
+                
                 const combustibleLimpio = eliminarRepetidosConsecutivos(combustiblesPruebas)
+                console.log('Combustible filtrado para eliminar valores duplicados', combustibleLimpio );
+                
                 const combustiblePorHora = agruparPorHora(combustibleLimpio);
+                console.log('Combustible filtrado por hora', combustiblePorHora);
+                
                 const combustiblePorDia = agruparPorDia(combustiblePorHora);
+                console.log('Combustible filtrado por dia', combustiblePorDia);
 
-                /* Calcular tiempo de Fecha A - Fecha B */
-                const {t: start } = messages[0];
-                const {t: end } = messages[messages.length - 1];
-                const elapsedTime = Timestamp.getElapsedTime(start, end);
-                this.generateHTMLInfo(elapsedTime.formatted, '#tiempoViaje');
+                this.generateHTMLInfo( Math.round((combustiblesPruebas.length * 15) / 60) , '#tiempoViaje');
 
                 if (combustibles.length) {
                     /* Graficas de combustible */
@@ -172,7 +174,7 @@ class index_helper {
                     this.generateHTMLInfo(`${rendimiento.toFixed(2)}`, '#rendimiento');
                 } else {
                     Utils.showToast(`Error de lectura de sensor ${sensor_fuel.n}`, "Error", "danger");
-                    this.generateHTMLInfo(`N/D`, '.kpis');
+                    this.generateHTMLInfo(`Sin datos`, '.kpis');
                     Highcharts.initChartLine([]);
                     Highcharts.initChart([]);
                 }

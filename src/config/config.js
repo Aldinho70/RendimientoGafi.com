@@ -27,6 +27,15 @@ export const params = {
                 id: 9,
             }, 
         },
+        /**
+         * 507 - Nivel de Combustible L.
+         * 310 - COMBUSTIBLE %
+         * 393 - COMBUSTIBLE %
+         * 60 - COMBUSTIBLE %
+         * 110 - COMBUSTIBLE %
+         * 74 - *No tiene sensor*
+         * M27 - COMBUSTIBLE USADO, CAN Fuel Used, Combustible Consumido, CAN Fuel Rate, Nivel Combustible %, Combustible Utilizado
+         */
 
     odometer: ['odometer']
 }

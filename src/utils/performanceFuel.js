@@ -116,10 +116,10 @@ export function agruparPorDia(objetoPorHora) {
             const actual = horasDelDia[i].promedioFuel;
             const diferencia = actual - prev;
             
-            if (diferencia > 35) {
-                carga += diferencia + 10;
-            } else if (diferencia < -5) {
-                descarga += Math.abs(diferencia) + 10;
+            if (diferencia > 10) {
+                carga += diferencia;
+            } else if (diferencia < 10) {
+                descarga += Math.abs(diferencia);
             }
         }
 
