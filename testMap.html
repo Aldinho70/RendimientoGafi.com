@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mapa con Camioncitos</title>
+    <meta charset="utf-8" />
+    <style>
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+    </style>
+    <script async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDe6wqmHqUa-zXZT_QbpKW-EAFByuOf4x0&callback=initMap">
+    </script>
+    <script>
+      function initMap() {
+        // Ubicaciones en México
+        const cdMx = { lat: 19.4326, lng: -99.1332 }; // Ciudad de México
+        const monterrey = { lat: 25.6866, lng: -100.3161 }; // Monterrey
+
+        // Crear mapa
+        const map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 6,
+          center: { lat: 22.0, lng: -99.0 }, // Centro aproximado México
+          mapTypeControl: false,     // Quita el control de Mapa | Satélite
+          disableDefaultUI: true
+        });
+
+        // Ícono personalizado de camión (puedes cambiar URL a otro PNG/SVG)
+        const camionIcon = {
+          url: "https://cdn-icons-png.flaticon.com/512/679/679720.png",
+          scaledSize: new google.maps.Size(40, 40), // Tamaño
+        };
+
+        // Marcador en CDMX
+        const marker1 = new google.maps.Marker({
+          position: cdMx,
+          map,
+          title: "Camión en CDMX",
+          icon: camionIcon,
+        });
+
+        // Marcador en Monterrey
+        const marker2 = new google.maps.Marker({
+          position: monterrey,
+          map,
+          title: "Camión en Monterrey",
+          icon: camionIcon,
+        });
+
+        // Dibujar línea entre los dos puntos
+        const ruta = new google.maps.Polyline({
+          path: [cdMx, monterrey],
+          geodesic: true,
+          strokeColor: "#FF0000",
+          strokeOpacity: 1.0,
+          strokeWeight: 3,
+        });
+
+        ruta.setMap(map);
+
+        // Ventanas de información
+        const info1 = new google.maps.InfoWindow({ content: "<b>Camión en CDMX</b>" });
+        const info2 = new google.maps.InfoWindow({ content: "<b>Camión en Monterrey</b>" });
+
+        marker1.addListener("click", () => info1.open(map, marker1));
+        marker2.addListener("click", () => info2.open(map, marker2));
+
+        map.addListener("zoom_changed", () => {
+        if (map.getZoom() >= 18) {
+            console.log('zoom de 3D');
+            
+            map.setTilt(45); // Activa 3D cuando haces mucho zoom
+        } else {
+            map.setTilt(0);  // Vuelve a plano normal
+        }
+        });
+
+      }
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>

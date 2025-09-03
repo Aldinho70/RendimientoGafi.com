@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mapa 3D en México</title>
+    <meta charset="utf-8" />
+    <style>
+      html, body { height: 100%; margin: 0; padding: 0; }
+      #map { height: 100%; width: 100%; }
+    </style>
+    <script async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBEsx7PVLRF_dl69ASpxaEHhsCxpkTckd&v=beta&libraries=maps3d,marker&callback=initMap">
+    </script>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+      async function initMap() {
+        // Importar librerías 3D y marker
+        const { Map3DElement } = await google.maps.importLibrary("maps3d");
+        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+        // Crear mapa 3D
+        const map3d = new Map3DElement({
+          center: { lat: 19.4326, lng: -99.1332, altitude: 500 },
+          tilt: 67.5,
+          heading: 0,
+          mode: "hybrid",
+          zoom: 14,
+        });
+
+        // Agregar el mapa al DOM
+        document.getElementById("map").appendChild(map3d);
+
+        // Crear camioncito
+        const camionIcon = document.createElement("img");
+        camionIcon.src = "https://cdn-icons-png.flaticon.com/512/679/679720.png";
+        camionIcon.style.width = "40px";
+
+        new AdvancedMarkerElement({
+          map: map3d,
+          position: { lat: 19.4326, lng: -99.1332 },
+          content: camionIcon,
+          title: "Camión en CDMX",
+        });
+
+        // Dibujar ruta CDMX -> Puebla -> Veracruz
+        const rutaCoords = [
+          { lat: 19.4326, lng: -99.1332 },
+          { lat: 19.0414, lng: -98.2063 },
+          { lat: 19.1738, lng: -96.1342 },
+        ];
+
+        new google.maps.Polyline({
+          path: rutaCoords,
+          map: map3d,
+          strokeColor: "#FF0000",
+          strokeOpacity: 1.0,
+          strokeWeight: 4,
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -47,6 +47,7 @@ class index_helper {
      * Funcion para cargar los mensajes totales de una unidad
      */
     getMessagesLoader = async (unit, from, to) => {
+        
         const _from = Timestamp.toUnixTimestamp(from);
         const _to = Timestamp.toUnixTimestamp(to);
 
@@ -56,6 +57,25 @@ class index_helper {
 
         const name = unit_data.getName();
         const sensors = unit_data.getSensors();
+
+        /* Quitar esta baina de aqui, se puso de emergencia */
+        const params = new URLSearchParams(window.location.search);
+        const idUnit = params.get("idUnit"); 
+        
+        if( idUnit ){
+            console.log( 'Agregando unidad al select: ', idUnit, name );
+            $("#unitsSelect").empty();
+            $("#unitsSelect").append(
+                $("<option>", {
+                    value: idUnit,  // value del option
+                    text: name,    // texto visible
+                    selected: true
+                })
+            );
+
+            $("#unitsSelect").prop("disabled", true);
+        }
+        /* Quitar esta baina de aqui, se puso de emergencia */
 
         const sensor_fuel = getSensorByName('COMBUSTIBLE DASHBOARD', sensors)?.id
             ? unit_data.getSensor(getSensorByName('COMBUSTIBLE DASHBOARD', sensors).id)
