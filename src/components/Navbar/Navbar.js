@@ -4,13 +4,13 @@ $(document).ready(() =>{
     $(`#Navbar_root`).html(`
         <a class="navbar-brand p-2" href="#">
             <img src="${Navbar.img_brand}" alt="Logo Izquierdo">
-            ${Navbar.brand}
+            <span class="text-dark">${Navbar.brand}</span>
         </a>
         <div class="navbar-icons text-light">
-        <a class="navbar-brand p-2" href="#">
-            <img src="${Navbar.img_brand_2}" alt="Logo Izquierdo">
-            Jornada digital
-        </a>
+            <a class="navbar-brand p-2" href="#">
+                <img src="${Navbar.img_brand_2}" alt="Logo Izquierdo">
+                <span class="text-dark">Jornada Digital</span>
+            </a>
         </div>`
     );
 

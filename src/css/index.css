@@ -1,5 +1,6 @@
 body {
-    background-color: #f8f9fa;
+    /* background-color: #f8f9fa; */
+    background-color: rgba(255, 255, 255, 0.1);
     font-family: 'Arial', sans-serif;
 }
 .card {
@@ -39,5 +40,5 @@ iframe {
   }
 
   #Main_root{
-    border-radius: 150px;
+    border-radius: 50px;
   }

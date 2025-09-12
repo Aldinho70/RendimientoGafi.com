@@ -19,18 +19,16 @@ $(document).ready(async () => {
   Map.initMap();
   // Highchart.initChart({ start_combustible: 1, end_combustible: 1 });
 
+  /* Obtener los datos por el URL */
   const params = new URLSearchParams(window.location.search);
-
   const idUnit = params.get("idUnit"); 
-  const nameUnit = params.get("name"); 
 
   if( idUnit ){
-
     const now = new Date();
     const endDate = new Date(now);
     endDate.setHours(23, 59, 0, 0);
     const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - 15);
+    startDate.setDate(startDate.getDate() - 1);
     startDate.setHours(0, 0, 0, 0);
 
     const startDateStr = timestamp.formatLocalDate(startDate);
@@ -38,17 +36,7 @@ $(document).ready(async () => {
 
     $(`#startDate`).val(startDateStr);
     $(`#endDate`).val(endDateStr);
-    // $("#unitsSelect").val(idUnit);
-    // $("#unitsSelect").prop("disabled", true);
-
-    // $("#unitsSelect").append(
-    //   $("<option>", {
-    //     value: idUnit,     // value del option
-    //     text: nameUnit // texto visible
-    //   })
-    // );
-
-    // ⏳ esperar 10 segundos antes de ejecutar la petición
+    
     setTimeout(() => {
       index_helper.getMessagesLoader(idUnit, startDateStr, endDateStr);
     }, 3000); // 10000 ms = 10s

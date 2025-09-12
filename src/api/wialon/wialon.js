@@ -23,13 +23,15 @@ class WialonSDK {
           reject(wialon.core.Errors.getErrorText(code));
           return;
         }
-        console.log("Session init ");
+        // console.log("Session init ");
 
         try {
           const units = await this.loadUnits();
           resolve(units);
         } catch (err) {
           reject(err);
+          console.log(err);
+          
         }
       });
     });

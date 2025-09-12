@@ -140,7 +140,7 @@ export function agruparPorDia(objetoPorHora) {
     resultadoFinal.totalDescarga = totalDescarga;
     resultadoFinal.conteoCargas = conteoCargas;
 
-    console.log(resultadoFinal);
+    // console.log(resultadoFinal);
     
     return resultadoFinal;
 }

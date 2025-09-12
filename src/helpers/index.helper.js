@@ -63,7 +63,6 @@ class index_helper {
         const idUnit = params.get("idUnit"); 
         
         if( idUnit ){
-            console.log( 'Agregando unidad al select: ', idUnit, name );
             $("#unitsSelect").empty();
             $("#unitsSelect").append(
                 $("<option>", {
@@ -154,16 +153,11 @@ class index_helper {
                 Highcharts.initChart([]);
             } else {
                 /* Filtrado y limpeza del array de combustible*/
-                console.log(combustiblesPruebas);
-                
                 const combustibleLimpio = eliminarRepetidosConsecutivos(combustiblesPruebas)
-                console.log('Combustible filtrado para eliminar valores duplicados', combustibleLimpio );
                 
                 const combustiblePorHora = agruparPorHora(combustibleLimpio);
-                console.log('Combustible filtrado por hora', combustiblePorHora);
                 
                 const combustiblePorDia = agruparPorDia(combustiblePorHora);
-                console.log('Combustible filtrado por dia', combustiblePorDia);
 
                 this.generateHTMLInfo( Math.round((combustiblesPruebas.length * 15) / 60) , '#tiempoViaje');
 

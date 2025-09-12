@@ -10,7 +10,7 @@ $(document).ready(() => {
             <h1 class="text-dark">Cargando informacion...</h1>
             </div>
         </center>
-        <div class="container-fluid bg-light px-4 pb-4 h-100" style="border-radius: 30px">
+        <div class="container-fluid  px-4 pb-4 h-100">
             <!-- Filtros -->
             <div class="row g-3 mb-4">
                 <div class="col-md-3">
