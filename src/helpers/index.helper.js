@@ -1,14 +1,11 @@
 import Map from '../utils/map.js';
-import Speed from '../utils/speed.js';
 import Utils from '../utils/utils.js';
-import { params } from '../config/config.js';
-import Haversine from '../utils/Haversine.js';
 import Timestamp from '../utils/timestamp.js';
-import Performance from '../utils/performance.js';
 import Highcharts from '../api/highchart/index.highchart.js';
 import MessagesService from '../api/wialon/messages.wialon.js';
 import { getSensorByName } from '../api/wialon/utils/sensors/utils.js';
-import { agruparPorDia, agruparPorHora, eliminarRepetidosConsecutivos, filtrarCargasValidas } from '../utils/performanceFuel.js';
+import { ejecutarReporte } from '../api/wialon/utils/reports/getReports.js';
+import { agruparPorDia, agruparPorHora, eliminarRepetidosConsecutivos } from '../utils/performanceFuel.js';
 import timestamp from '../utils/timestamp.js';
 
 class index_helper {
@@ -18,7 +15,6 @@ class index_helper {
      */
     getUnits = async (sdk) => {
         const units = await sdk.init();
-
         this.generateHTMLSelect(units, '#unitsSelect');
     }
     /* ------------------------------------------- */
@@ -47,40 +43,43 @@ class index_helper {
      * Funcion para cargar los mensajes totales de una unidad
      */
     getMessagesLoader = async (unit, from, to) => {
-        
+        const session = wialon.core.Session.getInstance();
         const _from = Timestamp.toUnixTimestamp(from);
         const _to = Timestamp.toUnixTimestamp(to);
 
         const messageService = new MessagesService(unit, _from, _to);
         const unit_messages = await messageService.loadMessages();
         const unit_data = await messageService.getInfoUnit(unit);
+        const resources = await session.getItems("avl_resource");
 
         const name = unit_data.getName();
         const sensors = unit_data.getSensors();
 
-        /* Quitar esta baina de aqui, se puso de emergencia */
-        const params = new URLSearchParams(window.location.search);
-        const idUnit = params.get("idUnit"); 
-        
-        if( idUnit ){
-            $("#unitsSelect").empty();
-            $("#unitsSelect").append(
-                $("<option>", {
-                    value: idUnit,  // value del option
-                    text: name,    // texto visible
-                    selected: true
-                })
-            );
+        await ejecutarReporte( resources, "COMBUSTIBLE DIARIO UNIDAD GAFI", name, Timestamp.calcularDiasEntreFechas( from, to ) );
 
-            $("#unitsSelect").prop("disabled", true);
-        }
+        /* Quitar esta baina de aqui, se puso de emergencia */
+            const params = new URLSearchParams(window.location.search);
+            const idUnit = params.get("idUnit"); 
+            
+            if( idUnit ){
+                $("#unitsSelect").empty();
+                $("#unitsSelect").append(
+                    $("<option>", {
+                        value: idUnit,  // value del option
+                        text: name,    // texto visible
+                        selected: true
+                    })
+                );
+
+                $("#unitsSelect").prop("disabled", true);
+            }
         /* Quitar esta baina de aqui, se puso de emergencia */
 
         const sensor_fuel = getSensorByName('COMBUSTIBLE DASHBOARD', sensors)?.id
             ? unit_data.getSensor(getSensorByName('COMBUSTIBLE DASHBOARD', sensors).id)
             : 0;
 
-        const { messages, count } = unit_messages;
+        const { messages } = unit_messages;
 
         if (messages.length > 0) {
             // console.log('mensaje: ',messages);
@@ -96,7 +95,6 @@ class index_helper {
                 const {
                     x: longitud = 0,
                     y: latitud = 0,
-                    s: speed = 0
                 } = posicion || {};
 
                 /* array de velocidades registradas */
@@ -159,45 +157,17 @@ class index_helper {
                 
                 const combustiblePorDia = agruparPorDia(combustiblePorHora);
 
-                this.generateHTMLInfo( Math.round((combustiblesPruebas.length * 15) / 60) , '#tiempoViaje');
+                // this.generateHTMLInfo( Math.round((combustiblesPruebas.length * 15) / 60) , '#tiempoViaje');
 
                 if (combustibles.length) {
-                    /* Graficas de combustible */
                     Highcharts.initChart(combustiblePorDia);
                     Highcharts.initChartLine(combustibleLimpio);
-                    
-                    /* Datos de carga y descarga de combustible */
-                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.totalCarga)}`, '#cargaTotal');
-                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.conteoCargas)}`, '#cargas_totales');
-                    this.generateHTMLInfo(`${Math.round(combustiblePorDia.totalDescarga)}`, '#descargaTotal');
-
-                    /* combustible inicial */
-                    const start_combustible = combustibles[0].fuel;
-                    this.generateHTMLInfo(`${(start_combustible)}`, '#consumoInicial');
-                    
-                    /* combustible final */
-                    const end_combustible = combustibles[combustibles.length - 1].fuel;
-                    this.generateHTMLInfo(`${(end_combustible)}`, '#consumoFinal');
-                    
-                    /* Kilometros totales */
-                    const totalKm = Haversine.calculateDistanceByLatLong(coordinates);
-                    this.generateHTMLInfo(`${Math.round(totalKm)}`, '#kmRecorridos');
-                    
-                    /* Rendimiento de combustible y kilometros*/
-                    const rendimiento = Performance.calcularRendimiento(Math.round(totalKm), Math.round(combustiblePorDia.totalDescarga));
-                    this.generateHTMLInfo(`${rendimiento.toFixed(2)}`, '#rendimiento');
                 } else {
                     Utils.showToast(`Error de lectura de sensor ${sensor_fuel.n}`, "Error", "danger");
-                    this.generateHTMLInfo(`Sin datos`, '.kpis');
+                    // this.generateHTMLInfo(`Sin datos`, '.kpis');
                     Highcharts.initChartLine([]);
                     Highcharts.initChart([]);
                 }
-
-                const totalStop = Speed.totalStops(speeds);
-                this.generateHTMLInfo(`${totalStop} paradas`, '#paradas');
-
-                const promedio = Speed.calcularPromedioVelocidad(speeds);
-                this.generateHTMLInfo(`${promedio.toFixed(2)}`, '#velocidadPromedio');
             }
         } else {
             Utils.showToast("No hay mensajes", "Error", "info");

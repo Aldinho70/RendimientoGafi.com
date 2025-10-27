@@ -36,12 +36,12 @@ $(document).ready(() => {
                     <div class="card shadow border-0 text-bg-light">
                         <h6 class="card-header">Tanque al inicio</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold" ><span class="kpis" id="consumoInicial" >0</span> Litros</h4>
+                            <h4 class="fw-bold" ><span class="kpis" id="consumoInicial" >0</span></h4>
                         </div>
                         <div class="card shadow border-0 text-bg-light">
                             <h6 class="card-header">Tanque al final</h6>
                             <div class="card-body">
-                                <h4 class="fw-bold" ><span class="kpis" id="consumoFinal" >0</span> Litros</h4>
+                                <h4 class="fw-bold" ><span class="kpis" id="consumoFinal" >0</span></h4>
                             </div>
                         </div>
                     </div>
@@ -50,13 +50,13 @@ $(document).ready(() => {
                     <div class="card shadow border-0 text-bg-light">
                         <h6 class="card-header">Rendimiento</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold text-success" ><span class="kpis" id="rendimiento" >0</span> KM/Litros</h4>
+                            <h4 class="fw-bold text-success" ><span class="kpis" id="rendimiento" >0</span></h4>
                         </div>
                     </div>
                     <div class="card shadow border-0 text-bg-light">
                     <h6 class="card-header" >Kilómetros Recorridos</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold text-info"><span class="kpis" id="kmRecorridos">0</span> KM</h4>
+                            <h4 class="fw-bold text-info"><span class="kpis" id="kmRecorridos">0</span></h4>
                         </div>
                     </div>
                 </div>
@@ -64,12 +64,12 @@ $(document).ready(() => {
                     <div class="card shadow border-0 text-bg-light">
                         <h6 class="card-header">Cargado total</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold" ><span class="kpis" id="cargaTotal" >0</span> Litros</h4>
+                            <h4 class="fw-bold" ><span class="kpis" id="cargaTotal" >0</span></h4>
                         </div>
                         <div class="card shadow border-0 text-bg-light">
                             <h6 class="card-header">Descarga total</h6>
                             <div class="card-body">
-                                <h4 class="fw-bold" ><span class="kpis" id="descargaTotal" >0</span> Litros</h4>
+                                <h4 class="fw-bold" ><span class="kpis" id="descargaTotal" >0</span></h4>
                             </div>
                         </div>
                     </div>
@@ -127,7 +127,7 @@ $(document).ready(() => {
                     <div class="card shadow border-0">
                         <h6 class="card-header">Velocidad Promedio</h6>
                         <div class="card-body">
-                            <h4 class="fw-bold text-warning" ><span class="kpis" id="velocidadPromedio">0</span> KM/H</h4>
+                            <h4 class="fw-bold text-warning" ><span class="kpis" id="velocidadPromedio">0</span></h4>
                         </div>
                     </div>
                 </div>
@@ -149,4 +149,21 @@ function getLoading(tag) {
     setTimeout(() => {
         $(tag).fadeOut();
     }, 3000);
+}
+
+export const updateUnitStats = ( data ) => {
+    generateHTMLInfo( data?.["Tiempo en movimiento"]?? 'No data 👾', '#tiempoViaje' );
+    generateHTMLInfo( data?.["Llenado Total"]?? 'No data 👾', '#cargaTotal' );
+    generateHTMLInfo( data?.["Llenados totales"]?? 'No data 👾', '#cargas_totales' );
+    generateHTMLInfo( data?.["Combustible total descargado"]?? 'No data 👾', '#descargaTotal' );
+    generateHTMLInfo( data?.["RENDIMIENTO DE UNIDAD"]?? 'No data 👾', '#rendimiento');
+    generateHTMLInfo( data?.["KILOMETRAJE"]?? 'No data 👾', '#kmRecorridos');
+    generateHTMLInfo( data?.["Nivel de combustible final"]?? 'No data 👾', '#consumoFinal');
+    generateHTMLInfo( data?.["Nivel de combustible inicial"]?? 'No data 👾', '#consumoInicial');
+    generateHTMLInfo( data?.["Velocidad máxima en viajes"]?? 'No data 👾' , '#velocidadPromedio');
+    generateHTMLInfo( data?.["Cantidad de estacionamientos"]?? 'No data 👾' , '#paradas');
+}
+
+const generateHTMLInfo = (data, id) => {
+    $(id).html(`${data}`);
 }

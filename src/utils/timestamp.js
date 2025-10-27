@@ -96,6 +96,20 @@ class Timestamp {
 
         return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
     }
+
+    calcularDiasEntreFechas(from, to) {
+        var fechaInicio = new Date(from);
+        var fechaFin = new Date(to);
+
+        // Diferencia en milisegundos
+        var diferencia = fechaFin - fechaInicio;
+
+        // Convertir milisegundos a días
+        var dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+
+        return dias;
+    }
+
 }
 
 export default new Timestamp()
