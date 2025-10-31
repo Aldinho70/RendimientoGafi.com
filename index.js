@@ -28,7 +28,7 @@ $(document).ready(async () => {
     const endDate = new Date(now);
     endDate.setHours(23, 59, 0, 0);
     const startDate = new Date(now);
-    startDate.setDate(startDate.getDate() - 1);
+    startDate.setDate(startDate.getDate() - 7);
     startDate.setHours(0, 0, 0, 0);
 
     const startDateStr = timestamp.formatLocalDate(startDate);
