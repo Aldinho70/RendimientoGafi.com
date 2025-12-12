@@ -1,4 +1,4 @@
-export const TOKEN = "733a7307cd0dd55c139f57fcaa9269d3F12C2E19D64038D73A9DA29F02FF6C63CC34EA7B";
+export const TOKEN = "733a7307cd0dd55c139f57fcaa9269d3F2C3174113FA868A9CA730A6B29A073E52098058";
 export const CDN = "https://hst-api.wialon.com";
 
 /* configuracion de sensores y parametros necesarios para  */
